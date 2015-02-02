@@ -45,6 +45,7 @@ int evaluate(char *expression){
 				*result = atoi(element); 
 				push(container, result);
 		}
+		free(element);
 		element = pop(seprated);
 	}
 	return *(int*)pop(container);
