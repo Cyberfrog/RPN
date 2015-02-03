@@ -3,3 +3,5 @@
 int evaluate(char *expression);
 Stack spliteBySpace(char* expression);
 
+Stack tokenize(char* expression);
+

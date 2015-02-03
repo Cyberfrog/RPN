@@ -4,7 +4,7 @@
 
 const char SPACE=' ';
 int evaluate(char *expression){
-	Stack seprated = spliteBySpace(expression);
+	Stack seprated = tokenize(expression);
 	Stack container =  createStack();
 	int count=0;
 	int op1,op2;
@@ -74,5 +74,37 @@ Stack spliteBySpace(char* expression){
 	}
 	string = strCopy(&expression[i+1],(spaceIndex-i)-1);
 	push(s, string);
+	return s;
+}
+int isDigit(char d){
+	return d>='0'&&d<='9';
+}
+int isOprator(char d){
+	return d=='+'||d=='-'||d=='*'||d=='/';
+}
+Stack tokenize(char* expression){
+	Stack s = createStack();
+	char * string;
+	int length =  strlen(expression);
+	int i,lastIndex=length;
+
+	for(i=length-1;i>=0;i--){
+		if(!isDigit(expression[i])){
+			if(lastIndex-i>=2){
+				string = strCopy(&expression[i+1],(lastIndex-i)-1);
+				push(s, string);
+
+			}
+			lastIndex =i;
+		}
+		if(isOprator(expression[i])){
+			string = strCopy(&expression[i],1);
+			push(s, string);
+			
+		}
+	}
+	string = strCopy(&expression[i+1],(lastIndex-i)-1);
+	push(s, string);
+
 	return s;
 }

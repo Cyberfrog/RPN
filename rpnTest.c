@@ -52,3 +52,17 @@ void test_splitBySpace_returns_Stack_all_splited_Strings_ (){
 	poped =pop(result);
 	assertEqual(strcmp(poped,"jo"),0);
 }
+void test_tokenize_returns_seprated_token(){
+	char * expression ="22 33 55+-";
+	Stack result  =  tokenize(expression);
+	char * poped =pop(result);
+	assertEqual(strcmp(poped,"22"),0);
+	poped =pop(result);
+	assertEqual(strcmp(poped,"33"),0);
+	poped =pop(result);
+	assertEqual(strcmp(poped,"55"),0);
+	poped =pop(result);
+	assertEqual(strcmp(poped,"+"),0);
+	poped =pop(result);
+	assertEqual(strcmp(poped,"-"),0);
+}
