@@ -1,6 +1,7 @@
 #include "expr_assert.h"
 #include "rpn.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 void test_evaluate_returns_5_for_2_3_Plus (){
 	char * expression ="2 3 +";
@@ -65,4 +66,43 @@ void test_tokenize_returns_seprated_token(){
 	assertEqual(strcmp(poped,"+"),0);
 	poped =pop(result);
 	assertEqual(strcmp(poped,"-"),0);
+}
+void test_createEquation_returns_the_Equation(){
+	int *op1=malloc(sizeof(int)),*op2=malloc(sizeof(int));
+	char op='+';
+	Equation e;
+	Stack s=createStack();
+	*op1=22,*op2=23;
+	push(s,op1);
+	push(s,op2);
+	e = createEquation(s,op);
+	assertEqual(e.oprand1,22);
+	assertEqual(e.oprand2, 23);
+	assertEqual(e.opretor, op);
+}
+void test_evaluateEquation_returns_45_for_22_23_plus_equation(){
+	int *op1=malloc(sizeof(int)),*op2=malloc(sizeof(int));
+	int *result;
+	char op='+';
+	Equation e;
+	Stack s=createStack();
+	*op1=22,*op2=23;
+	push(s,op1);
+	push(s,op2);
+	e = createEquation(s,op);
+	result = evaluateEquation(e);
+	assertEqual(*result,45);
+}
+void test_evaluateEquation_returns_5_for_25_20_minus_equation(){
+	int *op1=malloc(sizeof(int)),*op2=malloc(sizeof(int));
+	int *result;
+	char op='-';
+	Equation e;
+	Stack s=createStack();
+	*op1=25,*op2=20;
+	push(s,op1);
+	push(s,op2);
+	e = createEquation(s,op);
+	result = evaluateEquation(e);
+	assertEqual(*result,5);
 }
