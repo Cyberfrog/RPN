@@ -45,15 +45,11 @@ char * strCopy(char * source,int noOfChar){
 	return dest;
 }
 
-
-
-
 void pushToken(char *expression,int index,int sizeOftoken, Stack * tokenized){
 	if(sizeOftoken>0){
 		char * token;
 		token = strCopy(&expression[index],sizeOftoken);
 		push(*tokenized, token);
-
 	}
 }
 
@@ -73,8 +69,8 @@ Stack tokenize(char* expression){
 			pushToken(expression, index,1,&tokenized);		
 		}
 	}
+
 	pushToken(expression,index+1,(currentLength-index)-1, &tokenized);
-	
 	return tokenized;
 }
 
@@ -86,8 +82,10 @@ Equation createEquation(Stack bottle ,char oprator){
 	free(op1);
 	return e;
 }
+
 int* evaluateEquation(Equation e){
 	int* result = (int*)malloc(sizeof(int));
+
 	switch(e.opretor){
 		case '+':
 			*result =e.oprand1+e.oprand2;

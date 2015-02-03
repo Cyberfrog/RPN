@@ -106,3 +106,24 @@ void test_evaluateEquation_returns_5_for_25_20_minus_equation(){
 	result = evaluateEquation(e);
 	assertEqual(*result,5);
 }
+// ----------------------------------------------version2Test-----------------------------------------------------------
+void test_evaluate_returns_14_for_5_1_2_plus_4_mul_plus_3_minus (){
+	char * expression ="5 1 2 + 4 * + 3 -";
+	int result  =  evaluate(expression);
+	assertEqual(result, 14);
+}
+void test_evaluate_returns_7_for_2_2_2_mul_2_minus_3_plus_plus (){
+	char * expression ="2 2 2 * 2 - 3 + +";
+	int result  =  evaluate(expression);
+	assertEqual(result, 7);
+}
+void test_evaluate_returns_20_for_2_2_2_2_2_mul__mul_2_plus_plus_2_minus_mul (){
+	char * expression ="2 2 2 2 2 * * 2 + + 2 - *";
+	int result  =  evaluate(expression);
+	assertEqual(result, 20);
+}
+void test_evaluate_returns_0_for_2_2_minus_2_2_2_mul_2_minus_minus_minus (){
+	char * expression ="2 2 - 2 2 2 * 2 - - -";
+	int result  =  evaluate(expression);
+	assertEqual(result, 0);
+}
