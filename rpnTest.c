@@ -5,43 +5,43 @@
 #include <string.h>
 void test_evaluate_returns_5_for_2_3_Plus (){
 	char * expression ="2 3 +";
-	int result  =  evaluate(expression);
-	assertEqual(result, 5);
+	Result result  =  evaluate(expression);
+	assertEqual(result.status, 5);
 }
 void test_evaluate_returns_1_for_2_3_MINUS (){
 	char * expression ="2 3 -";
-	int result  =  evaluate(expression);
-	assertEqual(result, -1);
+	Result result  =  evaluate(expression);
+	assertEqual(result.status, -1);
 }
 void test_evaluate_returns_6_for_2_3_multiply (){
 	char * expression ="2 3 *";
-	int result  =  evaluate(expression);
-	assertEqual(result, 6);
+	Result result  =  evaluate(expression);
+	assertEqual(result.status, 6);
 }
 void test_evaluate_returns_0_for_2_3_divide (){
 	char * expression ="2 3 /";
-	int result  =  evaluate(expression);
-	assertEqual(result, 0);
+	Result result  =  evaluate(expression);
+	assertEqual(result.status, 0);
 }
 void test_evaluate_returns_minus5_for_2_3_4_plus_minus (){
 	char * expression ="2 3 4 + -";
-	int result  =  evaluate(expression);
-	assertEqual(result, -5);
+	Result result  =  evaluate(expression);
+	assertEqual(result.status, -5);
 }
 void test_evaluate_returns_120_for_1_2_3_4_5_mul_mul_mul_mul (){
 	char * expression ="1 2 3 4 5 * * * *";
-	int result  =  evaluate(expression);
-	assertEqual(result, 120);
+	Result result  =  evaluate(expression);
+	assertEqual(result.status, 120);
 }
 void test_evaluate_returns_60_for_20_20_20_add_add (){
 	char * expression ="20 20 20 + +";
-	int result  =  evaluate(expression);
-	assertEqual(result, 60);
+	Result result  =  evaluate(expression);
+	assertEqual(result.status, 60);
 }
 void test_evaluate_returns_600_for_200_200_200_add_add (){
 	char * expression ="200 200 200 + +";
-	int result  =  evaluate(expression);
-	assertEqual(result, 600);
+	Result result  =  evaluate(expression);
+	assertEqual(result.status, 600);
 }
 void test_splitBySpace_returns_Stack_all_splited_Strings_ (){
 	char * expression ="23 hi jo";
@@ -109,21 +109,21 @@ void test_evaluateEquation_returns_5_for_25_20_minus_equation(){
 // ----------------------------------------------version2Test-----------------------------------------------------------
 void test_evaluate_returns_14_for_5_1_2_plus_4_mul_plus_3_minus (){
 	char * expression ="5 1 2 + 4 * + 3 -";
-	int result  =  evaluate(expression);
-	assertEqual(result, 14);
+	Result result  =  evaluate(expression);
+	assertEqual(result.status, 14);
 }
 void test_evaluate_returns_7_for_2_2_2_mul_2_minus_3_plus_plus (){
 	char * expression ="2 2 2 * 2 - 3 + +";
-	int result  =  evaluate(expression);
-	assertEqual(result, 7);
+	Result result  =  evaluate(expression);
+	assertEqual(result.status, 7);
 }
 void test_evaluate_returns_20_for_2_2_2_2_2_mul__mul_2_plus_plus_2_minus_mul (){
 	char * expression ="2 2 2 2 2 * * 2 + + 2 - *";
-	int result  =  evaluate(expression);
-	assertEqual(result, 20);
+	Result result  =  evaluate(expression);
+	assertEqual(result.status, 20);
 }
 void test_evaluate_returns_0_for_2_2_minus_2_2_2_mul_2_minus_minus_minus (){
 	char * expression ="2 2 - 2 2 2 * 2 - - -";
-	int result  =  evaluate(expression);
-	assertEqual(result, 0);
+	Result result  =  evaluate(expression);
+	assertEqual(result.status, 0);
 }
