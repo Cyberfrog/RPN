@@ -1,10 +1,10 @@
 #include "../StackADT/stack.h"
 typedef struct equation Equation;
-typedef struct result Result;
+typedef struct status Status;
 
-struct result {
+struct status {
   int error;
-  int status;
+  int result;
 };
 
 struct equation
@@ -14,7 +14,7 @@ struct equation
 	char opretor;
 };
 
-Result evaluate(char *expression);
+Status evaluate(char *expression);
 Stack spliteBySpace(char* expression);
 Stack tokenize(char* expression);
 Equation createEquation(Stack ,char );

@@ -13,7 +13,7 @@ int isOprator(char d){
 	return d=='+'||d=='-'||d=='*'||d=='/';
 }
 
-Result evaluate(char *expression){
+Status evaluate(char *expression){
 	Stack tokenized = tokenize(expression);
 	Stack bottle =  createStack();
 	Equation e;
@@ -32,7 +32,7 @@ Result evaluate(char *expression){
 		free(element);
 		element = pop(tokenized);
 	}
-	return (Result){0,*(int*)pop(bottle)};
+	return (Status){0,*(int*)pop(bottle)};
 }
 
 char * strCopy(char * source,int noOfChar){
