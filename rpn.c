@@ -4,7 +4,6 @@
 
 const char SPACE=' ';
 
-
 int isDigit(char d){
 	return d>='0'&&d<='9';
 }
@@ -19,9 +18,12 @@ Status evaluate(char *expression){
 	Equation e;
 	int *number;
 	char * element=pop(tokenized);
+	
 	while(element){
 		if(isOprator(*element)){
 			e =createEquation(bottle,element[0]);
+			if(!e.oprand1)
+				return(Status){1,0};
 			push(bottle,evaluateEquation(e));
 		}
 		else{
@@ -32,7 +34,8 @@ Status evaluate(char *expression){
 		free(element);
 		element = pop(tokenized);
 	}
-	return (Status){0,*(int*)pop(bottle)};
+
+	return *(bottle.count)==1?(Status){0,*(int*)pop(bottle)}:(Status){-1,0};
 }
 
 char * strCopy(char * source,int noOfChar){
@@ -77,10 +80,13 @@ Stack tokenize(char* expression){
 Equation createEquation(Stack bottle ,char oprator){
 	int *op2 = (int*)(pop(bottle));
 	int *op1 =(int*)(pop(bottle));
-	Equation e={*op1,*op2,oprator};
-	free(op2);
-	free(op1);
-	return e;
+	if(op2&&op1){
+		Equation e={*op1,*op2,oprator};
+		free(op2);
+		free(op1);
+		return e;
+	}
+	return (Equation){0,0,0};
 }
 
 int* evaluateEquation(Equation e){
@@ -118,3 +124,5 @@ Stack spliteBySpace(char* expression){
 	push(s, string);
 	return s;
 }
+
+

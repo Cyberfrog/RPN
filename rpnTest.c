@@ -127,3 +127,19 @@ void test_evaluate_returns_0_for_2_2_minus_2_2_2_mul_2_minus_minus_minus (){
 	Status result  =  evaluate(expression);
 	assertEqual(result.result, 0);
 }
+// ----------------------------------------------version3Test-----------------------------------------------------------
+void test_evaluate_returns_error_1_for_extra_optraor (){
+	char * expression ="2 2 - 2 2 2 * 2 - - - - -";
+	Status result  =  evaluate(expression);
+	assertEqual(result.error, 1);
+
+	assertEqual(result.result, 0);
+}
+
+void test_evaluate_returns_error_minus_1_for_extra_optrand (){
+	char * expression ="2 2 - 2 2 2 * 2 - - ";
+	Status result  =  evaluate(expression);
+	assertEqual(result.error, -1);
+
+	assertEqual(result.result, 0);
+}
