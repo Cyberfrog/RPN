@@ -21,7 +21,7 @@ Status evaluate(char *expression){
 	
 	while(element){
 		if(isOprator(*element)){
-			e =createEquation(bottle,element[0]);
+			e =createEquation(bottle,element);
 			if(!e.oprand1)
 				return(Status){1,0};
 			push(bottle,evaluateEquation(e));
@@ -77,11 +77,11 @@ Stack tokenize(char* expression){
 	return tokenized;
 }
 
-Equation createEquation(Stack bottle ,char oprator){
+Equation createEquation(Stack bottle ,char *oprator){
 	int *op2 = (int*)(pop(bottle));
 	int *op1 =(int*)(pop(bottle));
 	if(op2&&op1){
-		Equation e={*op1,*op2,oprator};
+		Equation e={*op1,*op2,*oprator};
 		free(op2);
 		free(op1);
 		return e;
@@ -107,22 +107,66 @@ int* evaluateEquation(Equation e){
 	}	
 	return result;		
 }
+// -----------------------------------------------------------------------version 4---------------------------------------------
+Token * creatToken(void* data ,Process *p){
 
-Stack spliteBySpace(char* expression){
-	Stack s = createStack();
-	char * string;
-	int length =  strlen(expression);
-	int i,spaceIndex=length;
-	for(i=length-1;i>=0;i--){
-		if(expression[i]==SPACE){
-			string = strCopy(&expression[i+1],(spaceIndex-i)-1);
-			push(s, string);
-			spaceIndex =i;
-		}
+	Token * t=(calloc(1, sizeof(Token)));
+	t->value =data;
+	t->p = p;
+	return t;
+}
+int isInfixOprator(char op){
+	return isOprator(op)||op=='('||op==')';
+}
+void pushInfixToken(char *expression,int index,int sizeOftoken, LinkedList * tokenized, Process* p){
+	if(sizeOftoken>0){
+		Token* token =creatToken(strCopy(&expression[index],sizeOftoken),p);
+		add_to_list(tokenized, create_node(token));
 	}
-	string = strCopy(&expression[i+1],(spaceIndex-i)-1);
-	push(s, string);
-	return s;
 }
 
+void processNumber(LinkedList *outputQueue,Stack bottle,char* Number){
+	int *data  = malloc(sizeof(int));
+	*data =atoi(Number);
+	add_to_list(outputQueue,create_node(data));
+}
+void processOprator(LinkedList *outputQueue,Stack bottle,char * oprator){
+	// if(hasHighPrecedence(oprator))
+	push(bottle,oprator);
 
+}
+int hasHighPrecedence(Stack bottle, char *oprator){
+	return getPrecidence(oprator)<getPrecidence((*bottle.top)->data);
+}
+LinkedList tokenize_infix(char *expression){
+	LinkedList tokenized=createList();
+	int length =  strlen(expression);
+	int index,currentIndex=-1;
+
+	for(index=0;index<length;index++){
+	
+		if(!isDigit(expression[index])){
+			pushInfixToken(expression,currentIndex+1,(index-currentIndex)-1, &tokenized,processNumber);
+			currentIndex = index;
+		}
+	
+		if(isInfixOprator(expression[index])){
+			pushInfixToken(expression, index,1,&tokenized,processOprator);		
+		}
+	}
+
+	pushInfixToken(expression,currentIndex+1,(index-currentIndex)-1, &tokenized,processNumber);
+	return tokenized;	
+}
+
+int getPrecidence(char * oprator){
+	switch(*oprator){
+		case '+':;
+		case '-':return 2;
+		case '*':;
+		case '/':return 3;
+		case ')':;
+		case '(':return 4;
+	}
+	return 0;
+}
