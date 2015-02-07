@@ -214,6 +214,11 @@ void test_isParenthesis_returns_0_if_Oprator_is_not_parathesis_(){
 	int p=isParenthesis(oprator);
 	assertEqual(p ,0);
 }
+void test_isParenthesis_returns_0_for_NULL_(){
+	char * oprator=NULL;
+	int p=isParenthesis(oprator);
+	assertEqual(p ,0);
+}
 void test_getPrecidence_returns_0_for_nonOprator_charecter_4(){
 	char * oprator="a";
 	int p=getPrecidence(oprator);
@@ -304,7 +309,7 @@ void test_processParenthesis_Push_left_parenthesis_in_the_stack(){
 	processParenthesis(NULL,oprator,leftParenthesis);
 	assert((*oprator.top)->data==leftParenthesis);
 }
-void test_processParenthesis_pops_all_oprator_until_left_parenthesis_from_the_stack(){
+void test_processParenthesis_for_right_parenthesis_pops_all_oprator_until_left_parenthesis_from_the_stack_and_put_it_in_queue(){
 	Stack oprator =  createStack();
 	Stack bottle =createStack();
 	LinkedList queue =createList();
@@ -324,6 +329,23 @@ void test_processParenthesis_pops_all_oprator_until_left_parenthesis_from_the_st
 	assert(queue.head->data == h_oprator1);
 	assert(queue.tail->data == oprator2);
 	assert((*bottle.top)->data== oprator1);	
+}
+void test_processParenthesis_return_0_when_parenthesis_does_not_Match(){
+	Stack oprator =  createStack();
+	Stack bottle =createStack();
+	LinkedList queue =createList();
+	char* oprator1="+";
+	char* h_oprator1="/";
+	char* oprator2="-";
+	char* rightParenthesis=")";
+	int result;
+	processOprator(&queue,bottle,oprator1);
+	processOprator(&queue,bottle,h_oprator1);
+	processOprator(&queue,bottle,oprator2);
+
+	result = processParenthesis(&queue,bottle,rightParenthesis);
+	
+	assertEqual(result,0);	
 }
 void test_popOpratorsToQueue_copy_all_oprators_to_queue(){
 	Stack bottle = createStack();
@@ -363,4 +385,9 @@ void test_infixToPostfix_handles_more_than_single_pair_brakets_(){
 	char* infixExpression="(3 * (3 + (4 / 2) ) )";
 	char* postfixExpression = infixToPostfix(infixExpression);
 	assert(strcmp(postfixExpression, "3 3 4 2 / + *")==0);
+}
+void test_infixToPostfix_returns_null_for_extra_closing_braket(){
+	char* infixExpression="3 * 3 + (4 / 2) ) ";
+	char* postfixExpression = infixToPostfix(infixExpression);
+	assert(postfixExpression==NULL);
 }

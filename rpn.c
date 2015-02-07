@@ -125,26 +125,27 @@ void pushInfixToken(char *expression,int index,int sizeOftoken, LinkedList * tok
 	}
 }
 
-void processNumber(LinkedList *outputQueue,Stack bottle,char* Number){
+int processNumber(LinkedList *outputQueue,Stack bottle,char* Number){
 	add_to_list(outputQueue,create_node(Number));
+	return 1;
 }
 
-void processOprator(LinkedList *outputQueue,Stack bottle,char * oprator){
+int processOprator(LinkedList *outputQueue,Stack bottle,char * oprator){
 	while(hasHighPrecedence(bottle,oprator)){
 		add_to_list(outputQueue,create_node(pop(bottle)));
 	}
 	push(bottle,oprator);
-
+	return 1;
 }
-void processParenthesis(LinkedList *outputQueue,Stack bottle,char * parenthesis){
+int processParenthesis(LinkedList *outputQueue,Stack bottle,char * parenthesis){
 	if(isRightParenthesis(parenthesis)){
-		while(!isParenthesis((*bottle.top)->data)){
+		while(*bottle.top && !isParenthesis((*bottle.top)->data)){
 			add_to_list(outputQueue,create_node(pop(bottle)));
 		}
-		pop(bottle);
-		return;
+		return isParenthesis(pop(bottle));
 	}
 	push(bottle,parenthesis);
+	return 1;
 }
 
 int hasHighPrecedence(Stack bottle, char *oprator){
@@ -160,18 +161,14 @@ LinkedList tokenize_infix(char *expression){
 		if(!isDigit(expression[index])){
 			pushInfixToken(expression,currentIndex+1,(index-currentIndex)-1, &tokenized,processNumber);
 			currentIndex = index;
-
 		}
-	
 		if(isInfixOprator(expression[index])){
 			pushInfixToken(expression, index,1,&tokenized,processOprator);		
 		}
 		if(isParenthesis(&expression[index])){
 			pushInfixToken(expression, index,1,&tokenized,processParenthesis);		
-
 		}
 	}
-
 	pushInfixToken(expression,currentIndex+1,(index-currentIndex)-1, &tokenized,processNumber);
 	return tokenized;	
 }
@@ -189,8 +186,8 @@ int getPrecidence(char * oprator){
 }
 
 void  printQueue(LinkedList queue){
-	void print(char *value){
-		printf("%s\n",value );
+	void print(void *value){
+		printf("%s\n",(char*)value );
 	};
 	traverse(queue,print);
 }
@@ -199,13 +196,13 @@ char * infixToPostfix(char * expression){
 	LinkedList queue = createList();
 	LinkedList tokenized = tokenize_infix(expression);
 	Stack operators  = createStack();
+	int isOK=0;
 	void processToken(Token *t){
-		(t->p)(&queue,operators,t->value);	
+		isOK=(t->p)(&queue,operators,t->value);	
 	}
 	traverse(tokenized,processToken);
 	popOpratorsToQueue(&queue,operators);
-	// printQueue(queue);
-	return stringifyQueue(queue);
+	return isOK?stringifyQueue(queue):NULL;
 }
 char* stringifyQueue(LinkedList queue){
 	int totalLength =0;
@@ -230,7 +227,7 @@ int isRightParenthesis(char *oprator){
 	return *oprator ==')';
 }
 int isParenthesis(char *oprator){
-	return *oprator==')'||*oprator=='(';
+	return oprator && (*oprator==')'||*oprator=='(');
 }
 void popOpratorsToQueue(LinkedList *quque,Stack bottle){
 	while(*bottle.top!=NULL){

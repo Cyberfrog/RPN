@@ -2,7 +2,7 @@
 typedef struct equation Equation;
 typedef struct status Status;
 typedef struct token Token;
-typedef void(Process)(LinkedList *,Stack s,char*);
+typedef int(Process)(LinkedList *,Stack s,char*);
 
 struct status {
   int error;
@@ -27,9 +27,9 @@ Equation createEquation(Stack bottle,char *oprator );
 int* evaluateEquation(Equation);
 LinkedList tokenize_infix(char *expression);
 Token * creatToken(void *,Process*);
-void processNumber(LinkedList* outputQueue,Stack bottle,char* Number);
-void processOprator(LinkedList *outputQueue,Stack bottle,char * oprator);
-void processParenthesis(LinkedList *outputQueue,Stack bottle,char * parenthesis);
+int processNumber(LinkedList* outputQueue,Stack bottle,char* Number);
+int processOprator(LinkedList *outputQueue,Stack bottle,char * oprator);
+int processParenthesis(LinkedList *outputQueue,Stack bottle,char * parenthesis);
 int getPrecidence(char *oprator);
 void pushInfixToken(char *expression,int index,int sizeOftoken, LinkedList * tokenized, Process* p);
 int hasHighPrecedence(Stack bottle,char* oprator);
