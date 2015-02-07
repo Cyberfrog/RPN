@@ -116,7 +116,7 @@ Token * creatToken(void* data ,Process *p){
 	return t;
 }
 int isInfixOprator(char op){
-	return isOprator(op)||op=='('||op==')';
+	return isOprator(op);
 }
 void pushInfixToken(char *expression,int index,int sizeOftoken, LinkedList * tokenized, Process* p){
 	if(sizeOftoken>0){
@@ -126,32 +126,49 @@ void pushInfixToken(char *expression,int index,int sizeOftoken, LinkedList * tok
 }
 
 void processNumber(LinkedList *outputQueue,Stack bottle,char* Number){
-	int *data  = malloc(sizeof(int));
-	*data =atoi(Number);
-	add_to_list(outputQueue,create_node(data));
+	add_to_list(outputQueue,create_node(Number));
 }
+
 void processOprator(LinkedList *outputQueue,Stack bottle,char * oprator){
-	// if(hasHighPrecedence(oprator))
+	while(hasHighPrecedence(bottle,oprator)){
+		add_to_list(outputQueue,create_node(pop(bottle)));
+	}
 	push(bottle,oprator);
 
 }
-int hasHighPrecedence(Stack bottle, char *oprator){
-	return getPrecidence(oprator)<getPrecidence((*bottle.top)->data);
+void processParenthesis(LinkedList *outputQueue,Stack bottle,char * parenthesis){
+	if(isRightParenthesis(parenthesis)){
+		while(!isParenthesis((*bottle.top)->data)){
+			add_to_list(outputQueue,create_node(pop(bottle)));
+		}
+		pop(bottle);
+		return;
+	}
+	push(bottle,parenthesis);
 }
+
+int hasHighPrecedence(Stack bottle, char *oprator){
+	return *bottle.top?getPrecidence((*bottle.top)->data)>=getPrecidence(oprator):0;
+}
+
 LinkedList tokenize_infix(char *expression){
 	LinkedList tokenized=createList();
 	int length =  strlen(expression);
 	int index,currentIndex=-1;
 
 	for(index=0;index<length;index++){
-	
 		if(!isDigit(expression[index])){
 			pushInfixToken(expression,currentIndex+1,(index-currentIndex)-1, &tokenized,processNumber);
 			currentIndex = index;
+
 		}
 	
 		if(isInfixOprator(expression[index])){
 			pushInfixToken(expression, index,1,&tokenized,processOprator);		
+		}
+		if(isParenthesis(&expression[index])){
+			pushInfixToken(expression, index,1,&tokenized,processParenthesis);		
+
 		}
 	}
 
@@ -165,8 +182,58 @@ int getPrecidence(char * oprator){
 		case '-':return 2;
 		case '*':;
 		case '/':return 3;
-		case ')':;
-		case '(':return 4;
+		case '(':;
+		case ')':return 1;
 	}
 	return 0;
+}
+
+void  printQueue(LinkedList queue){
+	void print(char *value){
+		printf("%s\n",value );
+	};
+	traverse(queue,print);
+}
+
+char * infixToPostfix(char * expression){
+	LinkedList queue = createList();
+	LinkedList tokenized = tokenize_infix(expression);
+	Stack operators  = createStack();
+	void processToken(Token *t){
+		(t->p)(&queue,operators,t->value);	
+	}
+	traverse(tokenized,processToken);
+	popOpratorsToQueue(&queue,operators);
+	// printQueue(queue);
+	return stringifyQueue(queue);
+}
+char* stringifyQueue(LinkedList queue){
+	int totalLength =0;
+	char * output = NULL;
+	Node *walker = queue.head;
+	void catString(char* token){
+		output =strcat(output,token);
+		totalLength-=(strlen(token)+1);
+		totalLength && (output = strcat(output," "));
+	};
+
+	while(walker!=NULL){
+		totalLength+=(strlen(walker->data)+1);
+		walker=walker->next;
+	}
+	output = (char *)calloc(sizeof(char),totalLength);
+	
+	traverse(queue,catString);
+	return output;
+}
+int isRightParenthesis(char *oprator){
+	return *oprator ==')';
+}
+int isParenthesis(char *oprator){
+	return *oprator==')'||*oprator=='(';
+}
+void popOpratorsToQueue(LinkedList *quque,Stack bottle){
+	while(*bottle.top!=NULL){
+		add_to_list(quque, create_node(pop(bottle)));
+	}
 }

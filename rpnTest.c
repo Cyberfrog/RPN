@@ -168,11 +168,11 @@ void test_pushInfixToken_push_token_from_expression_in_stack(){
 	assert(t->p==processor);
 }
 
-void test_processNumber_Push_number_in_the_stack(){
+void test_processNumber_Push_number_in_the_queue(){
 	LinkedList l=createList();
 	char * num="123";
 	processNumber(&l,(Stack){},num);
-	assertEqual(*(int*)(l.tail->data) ,123);
+	assert(l.tail->data==num);
 }
 void test_getPrecidence_returns_precidenceOf_oprator(){
 	char * oprator="+";
@@ -189,10 +189,30 @@ void test_getPrecidence_Mul_has_precidenceOf_3(){
 	int p=getPrecidence(oprator);
 	assertEqual(p ,3);
 }
-void test_getPrecidence_bracket_has_precidenceOf_4(){
-	char * oprator=")";
+void test_getPrecidence_leftParanthesis_has_precidenceOf_1(){
+	char * oprator="(";
 	int p=getPrecidence(oprator);
-	assertEqual(p ,4);
+	assertEqual(p ,1);
+}
+void test_isRightParenthesis_returns_1_if_Oprator_is_left_parathesis_(){
+	char * oprator=")";
+	int p=isRightParenthesis(oprator);
+	assertEqual(p ,1);
+}
+void test_isRightParenthesis_returns_0_if_Oprator_is_notleft_parathesis_(){
+	char * oprator="abc";
+	int p=isRightParenthesis(oprator);
+	assertEqual(p ,0);
+}
+void test_isParenthesis_returns_1_if_Oprator_is_parathesis_(){
+	char * oprator="(";
+	int p=isParenthesis(oprator);
+	assertEqual(p ,1);
+}
+void test_isParenthesis_returns_0_if_Oprator_is_not_parathesis_(){
+	char * oprator="abc";
+	int p=isParenthesis(oprator);
+	assertEqual(p ,0);
 }
 void test_getPrecidence_returns_0_for_nonOprator_charecter_4(){
 	char * oprator="a";
@@ -206,17 +226,42 @@ void test_processOprator_push_oprator_in_bottle(){
 	processOprator(&queue,bottle,oprator);
 	assert((*bottle.top)->data==oprator);
 }
-// void test_processOprator_pops_higher_precedence_oprator_form_bottlr_and_put_it_in_queue(){
-// 	Stack bottle =createStack();
-// 	LinkedList queue =createList();
-// 	char* oprator="+";
-// 	char* h_oprator="/";
+void test_processOprator_pops_higher_precedence_oprator_form_bottle_and_put_it_in_queue(){
+	Stack bottle =createStack();
+	LinkedList queue =createList();
+	char* oprator="+";
+	char* h_oprator="/";
+	processOprator(&queue,bottle,h_oprator);
+	processOprator(&queue,bottle,oprator);
+	assert(queue.tail->data == h_oprator);
+}
+void test_processOprator_pushes_the_low_precedence_oparator_in_bottle(){
+	Stack bottle =createStack();
+	LinkedList queue =createList();
+	char* oprator="+";
+	char* h_oprator="/";
+	processOprator(&queue,bottle,h_oprator);
+	processOprator(&queue,bottle,oprator);
+	assert((*bottle.top)->data== oprator);
+}
+void test_processOprator_pops_higher_precedence_oprator_form_bottle_and_put_it_in_queue_untile_findes_low_precedence_oprator(){
+	Stack bottle =createStack();
+	LinkedList queue =createList();
+	char* oprator1="+";
+	char* h_oprator1="/";
+	char* h_oprator2="*";
+	char* oprator2="-";
 
-// 	processOprator(&queue,bottle,h_oprator);
-// 	processOprator(&queue,bottle,oprator);
-// 	assert((*bottle.top)->data==oprator);
-// 	assert(queue.head->data==h_oprator);
-// }
+	processOprator(&queue,bottle,h_oprator1);
+	processOprator(&queue,bottle,h_oprator2);
+
+	processOprator(&queue,bottle,oprator2);
+	processOprator(&queue,bottle,oprator1);
+	
+	assert(queue.head->data == h_oprator1);
+	assert(queue.tail->data == oprator2);
+	assert((*bottle.top)->data== oprator1);
+}
 void test_hasHighPrecedence_returns_0_when_oprator_in_bottle_has_low_precedence(){
 	Stack bottle =createStack();
 	LinkedList queue =createList();
@@ -233,11 +278,89 @@ void test_hasHighPrecedence_returns_1_when_oprator_in_bottle_has_high_precedence
 	push(bottle,h_oprator);
 	assertEqual(hasHighPrecedence(bottle,oprator),1);
 }
-void test_hasHighPrecedence_returns_0_when_oprator_in_bottle_has_same_precedence(){
+
+void test_hasHighPrecedence_returns_1_when_oprator_in_bottle_has_same_precedence(){
 	Stack bottle =createStack();
 	LinkedList queue =createList();
 	char* oprator="+";
 	char* h_oprator="-";
 	push(bottle,h_oprator);
+	assertEqual(hasHighPrecedence(bottle,oprator),1);
+}
+
+void test_hasHighPrecedence_returns_0_when_bottle_is_empty(){
+	Stack bottle =createStack();
+	LinkedList queue =createList();
+	char* oprator="+";
 	assertEqual(hasHighPrecedence(bottle,oprator),0);
+}
+
+
+
+
+void test_processParenthesis_Push_left_parenthesis_in_the_stack(){
+	Stack oprator =  createStack();
+	char * leftParenthesis="(";
+	processParenthesis(NULL,oprator,leftParenthesis);
+	assert((*oprator.top)->data==leftParenthesis);
+}
+void test_processParenthesis_pops_all_oprator_until_left_parenthesis_from_the_stack(){
+	Stack oprator =  createStack();
+	Stack bottle =createStack();
+	LinkedList queue =createList();
+	char* oprator1="+";
+	char * leftParenthesis="(";
+	char* h_oprator1="/";
+	char* oprator2="-";
+	char* rightParenthesis=")";
+
+	processOprator(&queue,bottle,oprator1);
+	processParenthesis(&queue,bottle,leftParenthesis);
+	processOprator(&queue,bottle,h_oprator1);
+	processOprator(&queue,bottle,oprator2);
+
+	processParenthesis(&queue,bottle,rightParenthesis);
+	
+	assert(queue.head->data == h_oprator1);
+	assert(queue.tail->data == oprator2);
+	assert((*bottle.top)->data== oprator1);	
+}
+void test_popOpratorsToQueue_copy_all_oprators_to_queue(){
+	Stack bottle = createStack();
+	LinkedList queue =createList();
+	char* oprator1="+";
+	char* oprator2="/";
+	char* oprator3="-";
+	push(bottle,oprator1);
+	push(bottle,oprator2);
+	push(bottle,oprator3);
+	popOpratorsToQueue(&queue,bottle);
+	assert(*bottle.top== NULL);
+	assert(queue.head->data==oprator3);
+	assert(queue.tail->data==oprator1);
+
+}
+void test_stringifyQueue_coverts_the_content_for_LinkedList_to_string_with_space_as_separator(){
+	LinkedList q=createList();
+	char *	stringified;
+	add_to_list(&q, create_node("hi"));
+	add_to_list(&q, create_node("by"));
+	add_to_list(&q, create_node("buy"));
+	stringified = stringifyQueue(q);
+	assertEqual(strcmp(stringified, "hi by buy"),0);
+}
+void test_infixToPostfix_converts_given_infixExpression_to_postfixExpression(){
+	char* infixExpression="2+3";
+	char* postfixExpression = infixToPostfix(infixExpression);
+	assert(strcmp(postfixExpression, "2 3 +")==0);
+}
+void test_infixToPostfix_handles_brakets(){
+	char* infixExpression="3 + 4 * 2 / ( 1 - 5 )";
+	char* postfixExpression = infixToPostfix(infixExpression);
+	assert(strcmp(postfixExpression, "3 4 2 * 1 5 - / +")==0);
+}
+void test_infixToPostfix_handles_more_than_single_pair_brakets_(){
+	char* infixExpression="(3 * (3 + (4 / 2) ) )";
+	char* postfixExpression = infixToPostfix(infixExpression);
+	assert(strcmp(postfixExpression, "3 3 4 2 / + *")==0);
 }
